@@ -3,19 +3,30 @@ import { Route, Redirect, RouteProps } from "react-router-dom";
 // import { fire } from "../firebase/fire";
 import { useSession } from "../hooks/useSession";
 
-const PrivateRoute: React.FC<RouteProps> = ({
+interface PrivateRouteProps extends RouteProps {
+  component: any;
+}
+
+const PrivateRoute: React.FC<PrivateRouteProps> = ({
   component: Component,
   ...rest
-}: RouteProps) => {
+}: PrivateRouteProps) => {
   //   const user = fire.auth().currentUser;
   const userData = useSession();
-  console.log(" --- PrivateRoute/userData from useSession:", userData);
-  if (!Component) return null;
+  console.log(
+    " --- PrivateRoute/userData from useSession:",
+    userData.userData !== null
+  );
+  // if (!Component) return null;
   return (
     <Route
       {...rest}
       render={(props): any =>
-        userData !== null ? <Component {...props} /> : <Redirect to="/login" />
+        userData.userData !== null ? (
+          <Component {...props} />
+        ) : (
+          <Redirect to="/" />
+        )
       }
     />
   );
